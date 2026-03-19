@@ -395,6 +395,66 @@ const questions = [
     answer: 1,
     explanation: "Volatility is a memory forensics framework used to analyse RAM dumps during incident response to find malware, encryption keys and attacker artifacts."
   },
+  {
+    q: "What does a SOC analyst do when an alert fires?",
+    options: ["Immediately block the source IP", "Determine if the alert is a true or false positive", "Restart the affected server", "Notify the press"],
+    answer: 1,
+    explanation: "The first step is triage — determining whether the alert represents a real threat or a false positive before taking any action."
+  },
+  {
+    q: "What is a SIEM used for in a SOC?",
+    options: ["Encrypting network traffic", "Collecting and correlating log data to detect threats", "Scanning for open ports", "Managing user passwords"],
+    answer: 1,
+    explanation: "A SIEM (Security Information and Event Management) system aggregates logs from across the environment and uses correlation rules to surface potential threats."
+  },
+  {
+    q: "What does MTTR stand for in incident response?",
+    options: ["Mean Time To Respond", "Maximum Threat Threshold Rating", "Malware Triage and Threat Report", "Mean Time To Remediate"],
+    answer: 3,
+    explanation: "MTTR stands for Mean Time To Remediate — the average time it takes to fully resolve a security incident after it is detected."
+  },
+  {
+    q: "Which log source would you check first when investigating a suspected brute force SSH attack?",
+    options: ["Web server access logs", "Auth logs (/var/log/auth.log)", "DNS query logs", "Application error logs"],
+    answer: 1,
+    explanation: "Auth logs record all authentication attempts on Linux systems. Failed SSH login attempts appear here and are the primary source for investigating brute force attacks."
+  },
+  {
+    q: "What is the difference between an IDS and an IPS?",
+    options: ["IDS blocks traffic, IPS only detects", "IDS detects threats, IPS detects and blocks them", "They are the same thing", "IPS only works on endpoints"],
+    answer: 1,
+    explanation: "An IDS (Intrusion Detection System) alerts on suspicious activity. An IPS (Intrusion Prevention System) can also block the traffic automatically."
+  },
+  {
+    q: "In NIST SP 800-61, what are the four phases of incident response?",
+    options: ["Identify, Protect, Detect, Respond", "Preparation, Detection, Containment, Recovery", "Scan, Exploit, Report, Patch", "Triage, Escalate, Resolve, Document"],
+    answer: 1,
+    explanation: "NIST SP 800-61 defines four phases: Preparation, Detection and Analysis, Containment/Eradication/Recovery, and Post-Incident Activity."
+  },
+  {
+    q: "What does a SOC playbook define?",
+    options: ["How to configure firewalls", "Step-by-step response procedures for specific incident types", "Which employees have admin access", "How to write detection rules"],
+    answer: 1,
+    explanation: "A SOC playbook documents the exact steps an analyst should follow when responding to a specific type of incident, ensuring consistent and efficient response."
+  },
+  {
+    q: "What is threat hunting in a SOC context?",
+    options: ["Waiting for alerts to fire and responding", "Proactively searching for threats that evaded automated detection", "Running vulnerability scans on production systems", "Monitoring social media for threat actors"],
+    answer: 1,
+    explanation: "Threat hunting is a proactive process where analysts search for attacker activity that bypassed automated controls — rather than waiting for an alert to trigger."
+  },
+  {
+    q: "Which MITRE ATT&CK tactic comes after Initial Access?",
+    options: ["Exfiltration", "Execution", "Impact", "Collection"],
+    answer: 1,
+    explanation: "After gaining Initial Access, attackers typically move to Execution — running malicious code on the target system to establish a foothold."
+  },
+  {
+    q: "What does IOC stand for in threat intelligence?",
+    options: ["Internal Operations Center", "Indicator of Compromise", "Intrusion on Connection", "Index of Correlation"],
+    answer: 1,
+    explanation: "An IOC (Indicator of Compromise) is evidence that a system has been attacked — such as a malicious IP address, file hash, domain or registry key."
+  },
 ];
 
 let current = 0;
