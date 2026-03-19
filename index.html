@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cybersecurity Quiz</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0d1117;
+      color: #e6edf3;
+      font-family: 'JetBrains Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 720px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      color: #00ff41;
+      letter-spacing: 2px;
+      text-shadow: 0 0 20px #00ff41;
+    }
+
+    .header p {
+      color: #8b949e;
+      margin-top: 8px;
+      font-size: 0.85rem;
+    }
+
+    .progress-bar-wrap {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 4px;
+      height: 6px;
+      margin-bottom: 30px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: #00ff41;
+      width: 0%;
+      transition: width 0.4s ease;
+      box-shadow: 0 0 8px #00ff41;
+    }
+
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 32px;
+    }
+
+    .question-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #8b949e;
+      margin-bottom: 16px;
+    }
+
+    .question-text {
+      font-size: 1.1rem;
+      color: #e6edf3;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 14px 18px;
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      color: #e6edf3;
+      text-align: left;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .option:hover:not(:disabled) {
+      border-color: #00ff41;
+      background: #0d1117;
+      color: #00ff41;
+    }
+
+    .option.correct {
+      border-color: #00ff41;
+      background: rgba(0, 255, 65, 0.08);
+      color: #00ff41;
+      box-shadow: 0 0 12px rgba(0,255,65,0.2);
+    }
+
+    .option.wrong {
+      border-color: #ff4444;
+      background: rgba(255, 68, 68, 0.08);
+      color: #ff4444;
+      box-shadow: 0 0 12px rgba(255,68,68,0.2);
+    }
+
+    .option:disabled { cursor: default; }
+
+    .feedback {
+      margin-top: 20px;
+      padding: 14px 18px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      display: none;
+    }
+
+    .feedback.correct {
+      background: rgba(0,255,65,0.08);
+      border: 1px solid #00ff41;
+      color: #00ff41;
+      display: block;
+    }
+
+    .feedback.wrong {
+      background: rgba(255,68,68,0.08);
+      border: 1px solid #ff4444;
+      color: #ff4444;
+      display: block;
+    }
+
+    .next-btn {
+      margin-top: 24px;
+      width: 100%;
+      padding: 14px;
+      background: transparent;
+      border: 1px solid #00ff41;
+      border-radius: 8px;
+      color: #00ff41;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s;
+      display: none;
+    }
+
+    .next-btn:hover {
+      background: rgba(0,255,65,0.08);
+      box-shadow: 0 0 12px rgba(0,255,65,0.3);
+    }
+
+    .results {
+      text-align: center;
+      display: none;
+    }
+
+    .results h2 {
+      font-size: 1.6rem;
+      color: #00ff41;
+      margin-bottom: 10px;
+      text-shadow: 0 0 16px #00ff41;
+    }
+
+    .score-circle {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: 3px solid #00ff41;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 30px auto;
+      box-shadow: 0 0 30px rgba(0,255,65,0.3);
+    }
+
+    .score-circle span {
+      font-size: 2.2rem;
+      color: #00ff41;
+      font-weight: 700;
+    }
+
+    .score-breakdown {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin: 20px 0 30px;
+    }
+
+    .score-item { text-align: center; }
+
+    .score-item .number {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .score-item .label {
+      font-size: 0.78rem;
+      color: #8b949e;
+      margin-top: 4px;
+    }
+
+    .score-item.correct .number { color: #00ff41; }
+    .score-item.wrong .number { color: #ff4444; }
+
+    .result-msg {
+      color: #8b949e;
+      font-size: 0.88rem;
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    .restart-btn {
+      padding: 14px 32px;
+      background: transparent;
+      border: 1px solid #00ff41;
+      border-radius: 8px;
+      color: #00ff41;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .restart-btn:hover { background: rgba(0,255,65,0.08); }
+
+    .tag {
+      display: inline-block;
+      background: rgba(0,255,65,0.08);
+      border: 1px solid rgba(0,255,65,0.3);
+      color: #00ff41;
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 14px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>// CYBER QUIZ</h1>
+    <p>Test your cybersecurity knowledge</p>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <div class="card" id="quizCard">
+    <div class="question-meta">
+      <span id="questionNum">Question 1 of 15</span>
+      <span id="categoryTag"></span>
+    </div>
+    <div class="tag" id="diffTag"></div>
+    <div class="question-text" id="questionText"></div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next question →</button>
+  </div>
+
+  <div class="card results" id="results">
+    <h2>[ RESULTS ]</h2>
+    <div class="score-circle">
+      <span id="scorePercent"></span>
+    </div>
+    <div class="score-breakdown">
+      <div class="score-item correct">
+        <div class="number" id="correctCount"></div>
+        <div class="label">✔ Correct</div>
+      </div>
+      <div class="score-item wrong">
+        <div class="number" id="wrongCount"></div>
+        <div class="label">✘ Wrong</div>
+      </div>
+    </div>
+    <div class="result-msg" id="resultMsg"></div>
+    <button class="restart-btn" onclick="restart()">Try again</button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    category: "Cryptography",
+    difficulty: "Medium",
+    question: "What is the main difference between symmetric and asymmetric encryption?",
+    options: [
+      "Symmetric uses one key for both encryption and decryption. Asymmetric uses a key pair.",
+      "Symmetric is always faster and more secure than asymmetric.",
+      "Asymmetric encryption can only be used for file encryption.",
+      "Symmetric encryption requires a public key infrastructure."
+    ],
+    correct: 0,
+    explanation: "Symmetric encryption uses the same key to encrypt and decrypt. Asymmetric uses a public key to encrypt and a private key to decrypt."
+  },
+  {
+    category: "Web Security",
+    difficulty: "Easy",
+    question: "What does SQL injection exploit?",
+    options: [
+      "Weak passwords stored in a database",
+      "Unsanitised user input that is passed directly into a database query",
+      "A vulnerability in the web server's operating system",
+      "Cross-site scripting weaknesses in JavaScript"
+    ],
+    correct: 1,
+    explanation: "SQL injection works by inserting malicious SQL code into input fields that are not properly sanitised before being used in database queries."
+  },
+  {
+    category: "Network Security",
+    difficulty: "Medium",
+    question: "What is a man-in-the-middle (MitM) attack?",
+    options: [
+      "An attack where the attacker floods a network with traffic",
+      "An attack where the attacker secretly intercepts and potentially alters communication between two parties",
+      "An attack that targets the DNS server directly",
+      "An attack that installs malware on both endpoints simultaneously"
+    ],
+    correct: 1,
+    explanation: "In a MitM attack, the attacker positions themselves between two communicating parties, intercepting and potentially modifying traffic without either party knowing."
+  },
+  {
+    category: "MITRE ATT&CK",
+    difficulty: "Hard",
+    question: "Which MITRE ATT&CK technique describes using legitimate system tools to carry out malicious actions?",
+    options: [
+      "T1059 — Command and Scripting Interpreter",
+      "T1078 — Valid Accounts",
+      "T1027 — Obfuscated Files or Information",
+      "T1036 — Masquerading"
+    ],
+    correct: 0,
+    explanation: "T1059 covers the use of command-line interfaces and scripting interpreters — a common living-off-the-land technique where attackers use tools already present on the system."
+  },
+  {
+    category: "Penetration Testing",
+    difficulty: "Medium",
+    question: "What is the purpose of a reconnaissance phase in a penetration test?",
+    options: [
+      "To exploit identified vulnerabilities immediately",
+      "To gather as much information as possible about the target before attacking",
+      "To patch vulnerabilities found during the test",
+      "To generate the final report for the client"
+    ],
+    correct: 1,
+    explanation: "Reconnaissance is the information gathering phase. The goal is to map the attack surface — subdomains, open ports, technologies, employee names — before any exploitation begins."
+  },
+  {
+    category: "Cryptography",
+    difficulty: "Hard",
+    question: "What makes a hash function suitable for use in security applications?",
+    options: [
+      "It must be reversible so the original data can be recovered",
+      "It should be collision-resistant, preimage-resistant and fast to compute",
+      "It must use a secret key to produce the output",
+      "It should produce variable-length output depending on input size"
+    ],
+    correct: 1,
+    explanation: "Cryptographic hash functions must be collision-resistant (hard to find two inputs with the same hash), preimage-resistant (hard to reverse), and second-preimage-resistant."
+  },
+  {
+    category: "Cloud Security",
+    difficulty: "Medium",
+    question: "What is the most common cause of data breaches in cloud environments?",
+    options: [
+      "Weak encryption algorithms used by cloud providers",
+      "Misconfigured storage buckets and overly permissive IAM policies",
+      "Physical theft of cloud server hardware",
+      "Vulnerabilities in hypervisor software"
+    ],
+    correct: 1,
+    explanation: "The vast majority of cloud breaches are caused by misconfiguration — public S3 buckets, overly permissive IAM roles, exposed management interfaces — not by vulnerabilities in the cloud provider itself."
+  },
+  {
+    category: "Web Security",
+    difficulty: "Medium",
+    question: "What does CSRF stand for and what does it allow an attacker to do?",
+    options: [
+      "Cross-Site Request Forgery — trick a user's browser into making unintended requests to a site where they are authenticated",
+      "Client-Side Request Forgery — steal session tokens directly from the browser",
+      "Cross-Server Resource Fetching — access server resources without authentication",
+      "Credentials and Session Request Fraud — bypass login pages entirely"
+    ],
+    correct: 0,
+    explanation: "CSRF exploits the trust a web application has in a user's browser. The attacker crafts a request that the victim's authenticated browser sends unknowingly — for example, transferring funds or changing email addresses."
+  },
+  {
+    category: "Incident Response",
+    difficulty: "Easy",
+    question: "What is the correct order of the NIST incident response lifecycle?",
+    options: [
+      "Detection → Preparation → Containment → Recovery",
+      "Preparation → Detection and Analysis → Containment, Eradication and Recovery → Post-Incident Activity",
+      "Containment → Detection → Eradication → Preparation",
+      "Identification → Isolation → Remediation → Reporting"
+    ],
+    correct: 1,
+    explanation: "NIST SP 800-61 defines four phases: Preparation, Detection and Analysis, Containment/Eradication/Recovery, and Post-Incident Activity."
+  },
+  {
+    category: "Network Security",
+    difficulty: "Easy",
+    question: "What is the difference between a vulnerability and an exploit?",
+    options: [
+      "They mean the same thing in cybersecurity",
+      "A vulnerability is a weakness. An exploit is the code or technique used to take advantage of it.",
+      "An exploit is a weakness in software. A vulnerability is the attack that uses it.",
+      "A vulnerability is always critical. An exploit can be low severity."
+    ],
+    correct: 1,
+    explanation: "A vulnerability is a flaw or weakness in a system. An exploit is the tool, technique or code that takes advantage of that vulnerability to cause harm."
+  },
+  {
+    category: "Blockchain Security",
+    difficulty: "Hard",
+    question: "What is a reentrancy attack in the context of smart contracts?",
+    options: [
+      "An attacker replays a signed transaction multiple times on the blockchain",
+      "A malicious contract repeatedly calls back into the vulnerable contract before the first execution finishes, draining funds",
+      "An attacker modifies a deployed contract by exploiting the Ethereum Virtual Machine",
+      "A 51% attack that allows the attacker to rewrite blockchain history"
+    ],
+    correct: 1,
+    explanation: "Reentrancy attacks occur when a contract sends ETH to an attacker's contract, which then calls back into the original contract before its state is updated. The DAO hack in 2016 is the most famous example."
+  },
+  {
+    category: "Cryptography",
+    difficulty: "Hard",
+    question: "Why is RSA with a small public exponent (e=3) potentially dangerous?",
+    options: [
+      "It makes brute forcing the private key significantly easier",
+      "If the same message is encrypted to multiple recipients without padding, the message can be recovered using the Chinese Remainder Theorem",
+      "Small exponents are not supported by modern cryptographic libraries",
+      "It causes the modulus to be too short for secure communication"
+    ],
+    correct: 1,
+    explanation: "When e=3 and the same message is sent to 3 recipients without proper padding, an attacker can use the Chinese Remainder Theorem to compute the cube root of the ciphertext and recover the plaintext."
+  },
+  {
+    category: "Penetration Testing",
+    difficulty: "Easy",
+    question: "What is the difference between a black-box and white-box penetration test?",
+    options: [
+      "Black-box tests are done remotely. White-box tests require physical access.",
+      "In a black-box test the tester has no prior knowledge of the target. In a white-box test the tester has full knowledge including source code and architecture.",
+      "Black-box tests focus on the network. White-box tests focus on applications.",
+      "There is no practical difference — they refer to the same methodology."
+    ],
+    correct: 1,
+    explanation: "Black-box simulates an external attacker with no inside knowledge. White-box gives the tester full access to documentation, source code and architecture. Grey-box is somewhere in between."
+  },
+  {
+    category: "Cloud Security",
+    difficulty: "Hard",
+    question: "What is privilege escalation via IAM in AWS?",
+    options: [
+      "Gaining root access to the underlying EC2 host operating system",
+      "Using a low-privilege IAM role to attach a more permissive policy to yourself or another identity, increasing your access",
+      "Stealing access keys from environment variables and using them from a different IP",
+      "Exploiting a vulnerability in the AWS Management Console login page"
+    ],
+    correct: 1,
+    explanation: "IAM privilege escalation happens when an attacker with limited permissions finds a way to grant themselves additional permissions — for example, by calling iam:AttachUserPolicy to attach the AdministratorAccess policy to their own account."
+  },
+  {
+    category: "Web Security",
+    difficulty: "Medium",
+    question: "What is the purpose of Content Security Policy (CSP)?",
+    options: [
+      "To encrypt all content transmitted between the browser and the server",
+      "To restrict which sources the browser is allowed to load resources from, reducing the impact of XSS attacks",
+      "To prevent SQL injection by filtering input on the server side",
+      "To enforce HTTPS across all pages of a web application"
+    ],
+    correct: 1,
+    explanation: "CSP is an HTTP header that tells the browser which sources are allowed for scripts, images, stylesheets and other resources. A strong CSP significantly limits what an XSS payload can do even if it executes."
+  }
+];
+
+let current = 0;
+let correct = 0;
+let wrong = 0;
+let answered = false;
+
+function shuffle(arr) {
+  return arr.sort(() => Math.random() - 0.5);
+}
+
+let shuffled = shuffle([...questions]);
+
+function loadQuestion() {
+  const q = shuffled[current];
+  answered = false;
+
+  document.getElementById("questionNum").textContent = `Question ${current + 1} of ${shuffled.length}`;
+  document.getElementById("categoryTag").textContent = q.category;
+  document.getElementById("diffTag").textContent = q.difficulty;
+  document.getElementById("diffTag").style.color = q.difficulty === "Easy" ? "#00ff41" : q.difficulty === "Medium" ? "#ffaa00" : "#ff4444";
+  document.getElementById("diffTag").style.borderColor = q.difficulty === "Easy" ? "rgba(0,255,65,0.3)" : q.difficulty === "Medium" ? "rgba(255,170,0,0.3)" : "rgba(255,68,68,0.3)";
+  document.getElementById("diffTag").style.background = q.difficulty === "Easy" ? "rgba(0,255,65,0.06)" : q.difficulty === "Medium" ? "rgba(255,170,0,0.06)" : "rgba(255,68,68,0.06)";
+  document.getElementById("questionText").textContent = q.question;
+
+  const feedback = document.getElementById("feedback");
+  feedback.className = "feedback";
+  feedback.textContent = "";
+
+  document.getElementById("nextBtn").style.display = "none";
+
+  const optionsDiv = document.getElementById("options");
+  optionsDiv.innerHTML = "";
+
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement("button");
+    btn.className = "option";
+    btn.textContent = opt;
+    btn.onclick = () => selectAnswer(i);
+    optionsDiv.appendChild(btn);
+  });
+
+  const pct = (current / shuffled.length) * 100;
+  document.getElementById("progressBar").style.width = pct + "%";
+}
+
+function selectAnswer(index) {
+  if (answered) return;
+  answered = true;
+
+  const q = shuffled[current];
+  const buttons = document.querySelectorAll(".option");
+
+  buttons.forEach(b => b.disabled = true);
+
+  const feedback = document.getElementById("feedback");
+
+  if (index === q.correct) {
+    buttons[index].classList.add("correct");
+    feedback.className = "feedback correct";
+    feedback.textContent = "✔ Correct — " + q.explanation;
+    correct++;
+  } else {
+    buttons[index].classList.add("wrong");
+    buttons[q.correct].classList.add("correct");
+    feedback.className = "feedback wrong";
+    feedback.textContent = "✘ Wrong — " + q.explanation;
+    wrong++;
+  }
+
+  document.getElementById("nextBtn").style.display = "block";
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= shuffled.length) {
+    showResults();
+  } else {
+    loadQuestion();
+  }
+}
+
+function showResults() {
+  document.getElementById("quizCard").style.display = "none";
+  document.getElementById("progressBar").style.width = "100%";
+
+  const pct = Math.round((correct / shuffled.length) * 100);
+  document.getElementById("results").style.display = "block";
+  document.getElementById("scorePercent").textContent = pct + "%";
+  document.getElementById("correctCount").textContent = correct;
+  document.getElementById("wrongCount").textContent = wrong;
+
+  let msg = "";
+  if (pct === 100) msg = "Perfect score. You know your stuff.";
+  else if (pct >= 80) msg = "Strong result. You have a solid grasp of the fundamentals.";
+  else if (pct >= 60) msg = "Not bad. A few gaps to close but the foundation is there.";
+  else if (pct >= 40) msg = "Keep studying. The concepts will click with more exposure.";
+  else msg = "Tough one. Go back to the basics and try again.";
+
+  document.getElementById("resultMsg").textContent = msg;
+}
+
+function restart() {
+  current = 0;
+  correct = 0;
+  wrong = 0;
+  shuffled = shuffle([...questions]);
+  document.getElementById("results").style.display = "none";
+  document.getElementById("quizCard").style.display = "block";
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>
